@@ -1,6 +1,7 @@
 CC = g++
 CXX = g++
 CXXFLAGS = -std=c++11 -Wno-deprecated-register -Wall -Wextra
+TESTS_CXXFLAGS = $(CXXFLAGS)
 FLEX = flex
 BISON = bison
 
@@ -30,8 +31,13 @@ $(BUILD_DIR)/parser.tab.cpp $(BUILD_DIR)/parser.tab.hpp: $(SRC_DIR)/parser.y
 	@echo "Generating parser ..."
 	$(BISON) -d -o $(BUILD_DIR)/parser.tab.cpp $<
 
-test: $(BUILD_DIR)/$(EXECUTABLE)
-	$(BUILD_DIR)/$(EXECUTABLE) test.s
+test: $(BUILD_DIR)/test
+	@echo "Running tests ..."
+	$(BUILD_DIR)/test
+
+$(BUILD_DIR)/test: doctest.h asmline.h tests.cpp $(BUILD_DIR)/lexer.cpp $(BUILD_DIR)/parser.tab.cpp
+	@echo "Building test executable ..."
+	$(CC) $(TESTS_CXXFLAGS) -o $@ tests.cpp  $(BUILD_DIR)/lexer.cpp $(BUILD_DIR)/parser.tab.cpp
 
 clean:
 	@echo "Cleaning up ..."

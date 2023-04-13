@@ -1,0 +1,53 @@
+{
+  // Utilisez IntelliSense pour en savoir plus sur les attributs possibles.
+  // Pointez pour afficher la description des attributs existants.
+  // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Doctest test with LLDB",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/test",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": true,
+      "env": {},
+      "osx": {
+        "MIMode": "lldb",
+        "miDebuggerPath": "/usr/bin/lldb-mi",
+        "miDebuggerArgs": "--interpreter=mi2",
+        "debugServerPath": "/usr/bin/lldb-server",
+        "debugServerArgs": "platform --listen localhost:0",
+        "setupCommands": [
+          {
+            "text": "plugin load /usr/local/opt/llvm/lib/liblldb.dylib",
+            "description": "load lldb plugin"
+          }
+        ]
+      },
+      "linux": {
+        "MIMode": "lldb",
+        "miDebuggerPath": "/usr/bin/lldb-mi",
+        "miDebuggerArgs": "--interpreter=mi2",
+        "setupCommands": [
+          {
+            "text": "plugin load /usr/lib/lldb/plugins/LLDB-mi.plugin",
+            "description": "load lldb plugin"
+          }
+        ]
+      },
+      "windows": {
+        "MIMode": "lldb",
+        "miDebuggerPath": "C:/Program Files/LLVM/bin/lldb-mi.exe",
+        "miDebuggerArgs": "--interpreter=mi2",
+        "setupCommands": [
+          {
+            "text": "plugin load C:/Program Files/LLVM/bin/lldb.dll",
+            "description": "load lldb plugin"
+          }
+        ]
+      }
+    },
+  ]
+}
