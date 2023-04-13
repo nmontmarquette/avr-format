@@ -68,7 +68,7 @@ void process_cpp_line_comment(const char* text);
 %%
 
 program:
-        line { print_formatted_asm(); }
+        | line { print_formatted_asm(); }
         | program line { print_formatted_asm(); }
         ;
 
