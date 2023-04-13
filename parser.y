@@ -33,7 +33,7 @@ void skip_to_eol();
 %token <sval> LABEL
 %token <sval> INSTRUCTION
 %token COMMA PLUS MINUS MULT DIV
-%token COMMENT
+%token <sval> COMMENT
 %token <sval> IDENTIFIER
 %token <sval> INCLUDE
 %token LINE_COMMENT
@@ -61,17 +61,18 @@ program:
 
 line: EOL                         { printf("Parsed empty line\n"); }
         | label EOL               { asm_lines.push_back({$1, ""}); printf("Parsed label: '%s'\n", $1); free($1); }
+        | WHITESPACE comment EOL  { printf("Parsed comment: '%s'\n", $1); }
         | comment EOL             { printf("Parsed comment: '%s'\n", $1); }
         | directive EOL           { asm_lines.push_back({"", $1}); free($1); }
-        | directive comment       { asm_lines.push_back({"", $1}); free($1); }
+        | directive comment EOL   { asm_lines.push_back({"", $1}); free($1); }
         | label comment { asm_lines.push_back({$1, $2}); free($1); free($2); }
         ;
 
 directive:
           C_DIRECTIVE WHITESPACE argument     { printf("Parsed C/C++ directive: '%s', parameter: '%s'\n", $1, $3); }
         | ASM_DIRECTIVE      { printf("Parsed simple assembler directive: '%s'\n", $1); }
+        | ASM_DIRECTIVE WHITESPACE { printf("Parsed simple assembler directive: '%s'\n", $1); }
         | ASM_DIRECTIVE WHITESPACE argument     { printf("Parsed simple assembler directive: '%s', parameter: '%s'\n", $1, $3); }
-        | ASM_DIRECTIVE      {  }
         ;
 
 argument: IDENTIFIER                        { $$ = $1; }
@@ -82,7 +83,7 @@ label:
         LABEL                        { $$ = $1; }
         ;
 
-comment: SEMICOLON { skip_to_eol(); }
+comment: COMMENT { printf("Parsed comment: '%s'\n", $1); }
        ;
 
 

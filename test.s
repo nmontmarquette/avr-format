@@ -7,19 +7,17 @@ looop1:
 .global
 .global hghghhg
 .include "jghghghh"
-; 090909090
+
 #error      "sdfsdfsdf"
 #pragma khjhj
 #error       ghdgh
 
-; The usage below of both '#include' and '.include' as-is below is somehow important.include "6502-macros.inc"
-
 .global cpu6502_assert
 .global cpu6502_get_status_register_string
 
-.text
-
+.text   ; jkjkjkjkjk
 ;-------------------------------------------------------------------------------
+;
 ; Halt CPU execution
 ;
 ; Params:
