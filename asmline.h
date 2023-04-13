@@ -8,6 +8,7 @@ class AsmLine {
 public:
     std::string label;
     std::string instruction;
+    std::string comment;
 };
 
 #endif // ASMLINE_H

@@ -19,15 +19,22 @@ int parse(const std::string &input_string, std::string &output)
     if (parse_result == 0) {
 
         for (const auto& line : asm_lines) {
-        #if 0
             if (!line.label.empty()) {
-                output << line.label << ":";
+                output += line.label;
+                output += ":";
             }
 
             if (!line.instruction.empty()) {
-                output << "\t" << line.instruction;
+                output += "\t";
+                output += line.instruction;
             }
 
+            if (!line.comment.empty()) {
+                output += "; ";
+                output += line.comment;
+            }
+
+        #if 0
             if (!line.directive.empty()) {
                 output << "\t" << line.directive;
             }
@@ -41,12 +48,8 @@ int parse(const std::string &input_string, std::string &output)
                 output << line.operands[i];
             }
 
-            if (!line.comment.empty()) {
-                output << "\t;" << line.comment;
-            }
-
-            output << std::endl;
         #endif
+            output += "\n";
         }
     } else {
         std::cerr << "Error: Parsing failed." << std::endl;
@@ -56,13 +59,94 @@ int parse(const std::string &input_string, std::string &output)
     return 0;
 }
 
+void setup() {
+    // Setup code here
+    asm_lines.clear();
+}
+
 TEST_CASE("Empty input") {
+    setup();
     std::string input = "";
     std::string expected_output = "";
     std::string output;
-    //ormat_asm(input) == expected_output);
-    int result = parse(input, output);
-    REQUIRE(result == 1);
+    REQUIRE(parse(input, output) == 0);
+    REQUIRE(asm_lines.size() == 0);
+    REQUIRE(output == expected_output);
+}
+
+TEST_CASE("Empty line") {
+    setup();
+    std::string input = "\n";
+    std::string expected_output = "\n";
+    std::string output;
+    REQUIRE(parse(input, output) == 0);
+    REQUIRE(asm_lines.size() == 1);
+    REQUIRE(output == expected_output);
+}
+
+TEST_CASE("Empty lines") {
+    setup();
+    std::string input = "\n\n\n";
+    std::string expected_output = "\n\n\n";
+    std::string output;
+    REQUIRE(parse(input, output) == 0);
+    REQUIRE(asm_lines.size() == 3);
+    REQUIRE(output == expected_output);
+}
+
+#if 0
+TEST_CASE("Lines of text") {
+    std::string input = "abcedfg\n0123456\nabcdefg\n";
+    std::string expected_output = "abcedfg\n0123456\nabcdefg\n";
+    std::string output;
+    asm_lines.clear();
+    REQUIRE(parse(input, output) == 0);
+    REQUIRE(asm_lines.size() == 3);
+    REQUIRE(output == expected_output);
+}
+#endif
+
+TEST_CASE("Assembler style line comment at start of line") {
+    setup();
+    std::string input = "; this is a test comment at the start of a line.\n";
+    std::string expected_output = "; this is a test comment at the start of a line.\n";
+    std::string output;
+    REQUIRE(parse(input, output) == 0);
+    REQUIRE(asm_lines.size() == 1);
+    REQUIRE(asm_lines[0].comment == "this is a test comment at the start of a line.");
+    REQUIRE(output == expected_output);
+}
+
+TEST_CASE("Assembler style ine comment after whitespaces") {
+    setup();
+    std::string input = "    \t\t\t; this is a test comment following a few white spaces.\n";
+    std::string expected_output = "; this is a test comment following a few white spaces.\n";
+    std::string output;
+    REQUIRE(parse(input, output) == 0);
+    REQUIRE(asm_lines.size() == 1);
+    REQUIRE(asm_lines[0].comment == "this is a test comment following a few white spaces.");
+    REQUIRE(output == expected_output);
+}
+
+TEST_CASE("Assembler style line comment after whitespaces") {
+    setup();
+    std::string input = "    \t\t\t; this is a test comment following a few white spaces.\n";
+    std::string expected_output = "; this is a test comment following a few white spaces.\n";
+    std::string output;
+    REQUIRE(parse(input, output) == 0);
+    REQUIRE(asm_lines.size() == 1);
+    REQUIRE(asm_lines[0].comment == "this is a test comment following a few white spaces.");
+    REQUIRE(output == expected_output);
+}
+
+TEST_CASE("C++ style line comment after whitespaces") {
+    setup();
+    std::string input = "    \t\t\// this is a C++ style test comment following a few white spaces.\n";
+    std::string expected_output = "; this is a C++ style test comment following a few white spaces.\n";
+    std::string output;
+    REQUIRE(parse(input, output) == 0);
+    REQUIRE(asm_lines.size() == 1);
+    REQUIRE(asm_lines[0].comment == "this is a C++ style test comment following a few white spaces.");
     REQUIRE(output == expected_output);
 }
 
