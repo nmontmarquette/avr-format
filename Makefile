@@ -12,19 +12,24 @@ EXECUTABLE = formatter
 
 .PHONY: all clean
 
-all: $(BUILD_DIR)/$(EXECUTABLE)
+all: $(BUILD_DIR) $(BUILD_DIR)/$(EXECUTABLE)
 
 $(BUILD_DIR):
+	@echo "Creating build folder ..."
 	mkdir $(BUILD_DIR)
 
 $(BUILD_DIR)/$(EXECUTABLE): main.cpp $(BUILD_DIR)/lexer.cpp $(BUILD_DIR)/parser.tab.cpp
+	@echo "Generating binary ..."
 	$(CC) $(CXXFLAGS) -o $@ $^
 
 $(BUILD_DIR)/lexer.cpp: $(SRC_DIR)/lexer.l $(BUILD_DIR)/parser.tab.hpp
+	@echo "Generating lexer ..."
 	$(FLEX) -o $@ $<
 
-$(BUILD_DIR)/parser.tab.cpp $(BUILD_DIR) $(BUILD_DIR)/parser.tab.hpp: $(SRC_DIR)/parser.y
+$(BUILD_DIR)/parser.tab.cpp $(BUILD_DIR)/parser.tab.hpp: $(SRC_DIR)/parser.y
+	@echo "Generating parser ..."
 	$(BISON) -d -o $(BUILD_DIR)/parser.tab.cpp $<
 
 clean:
-	rm -f $(BUILD_DIR)/*.cpp $(BUILD_DIR)/*.hpp $(BIN_DIR)/$(EXECUTABLE)
+	@echo "Cleaning up ..."
+	rm -rdf $(BUILD_DIR)
