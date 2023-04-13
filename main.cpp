@@ -1,10 +1,9 @@
 #include <iostream>
 #include <fstream>
-#include <string>
-#include <vector>
 
-#include "build/parser.tab.hpp"
 #include "asmline.h"
+#include "build/parser.tab.hpp"
+
 
 extern FILE *yyin;
 extern int yyparse();

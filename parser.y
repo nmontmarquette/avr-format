@@ -24,8 +24,11 @@ void print_formatted_asm();
 
 %token <sval> LABEL
 %token <sval> INSTRUCTION
+%token TAB NEWLINE
 %token COMMA PLUS MINUS MULT DIV
 %token NUMBER
+%token MULTI_LINE_COMMENT
+%token LINE_COMMENT
 %token LPAREN RPAREN
 %token EOL
 
