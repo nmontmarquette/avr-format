@@ -31,7 +31,7 @@ $(BUILD_DIR)/parser.tab.cpp $(BUILD_DIR)/parser.tab.hpp: $(SRC_DIR)/parser.y
 	$(BISON) -d -o $(BUILD_DIR)/parser.tab.cpp $<
 
 test: $(BUILD_DIR)/$(EXECUTABLE)
-	$(BUILD_DIR)/$(EXECUTABLE) ../src/6502-dbg.s
+	$(BUILD_DIR)/$(EXECUTABLE) test.s
 
 clean:
 	@echo "Cleaning up ..."
