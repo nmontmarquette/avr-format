@@ -1,6 +1,6 @@
 CC = g++
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall -Wextra
+CXXFLAGS = -std=c++11 -Wno-deprecated-register -Wall -Wextra
 FLEX = flex
 BISON = bison
 
