@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Tests",
+            "type": "shell",
+            "command": "make all", // specify the command to build the Makefile target
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Build Lines Tests",
+            "type": "shell",
+            "command": "make test_lines", // specify the command to build the Makefile target
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

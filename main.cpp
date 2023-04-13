@@ -1,13 +1,12 @@
 #include <iostream>
 #include <fstream>
 
-#include "asmline.h"
+#include "lines.h"
 #include "build/parser.tab.hpp"
-
 
 extern FILE *yyin;
 extern int yyparse();
-extern std::vector<AsmLine> asm_lines;
+
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -24,14 +23,8 @@ int main(int argc, char *argv[]) {
     }
 
     if (yyparse() == 0) {
-        for (const auto &line : asm_lines) {
-            if (!line.label.empty()) {
-                std::cout << line.label << ":";
-            }
-            if (!line.instruction.empty()) {
-                std::cout << "\t" << line.instruction;
-            }
-            std::cout << std::endl;
+        for (const auto &line : gLines) {
+            std::cout << line.format();
         }
     } else {
         std::cerr << "Error: Parsing failed" << std::endl;

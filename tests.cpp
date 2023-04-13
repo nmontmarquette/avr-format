@@ -2,15 +2,22 @@
 #include <iostream>
 #include <vector>
 #include "doctest.h"
-#include "asmline.h"
+#include "lines.h"
 #include "build/parser.tab.hpp"
 
 extern int yyparse();
 extern void yy_scan_string(const char* str);
-extern std::vector<AsmLine> asm_lines;
+extern Lines gLines;
 
 // The format_asm function definition goes here
 
+/**
+ * @brief Returns 0 no parsing error or 1 error parsing the input.
+ *
+ * @param input_string
+ * @param output
+ * @return int
+ */
 int parse(const std::string &input_string, std::string &output)
 {
     yy_scan_string(input_string.c_str());
@@ -18,7 +25,9 @@ int parse(const std::string &input_string, std::string &output)
 
     if (parse_result == 0) {
 
-        for (const auto& line : asm_lines) {
+        for (const auto& line : gLines) {
+            output += line.format();
+        #if 0
             if (!line.label.empty()) {
                 output += line.label;
                 output += ":";
@@ -34,7 +43,6 @@ int parse(const std::string &input_string, std::string &output)
                 output += line.comment;
             }
 
-        #if 0
             if (!line.directive.empty()) {
                 output << "\t" << line.directive;
             }
@@ -49,7 +57,8 @@ int parse(const std::string &input_string, std::string &output)
             }
 
         #endif
-            output += "\n";
+            // line format already add a newline character
+            //output += "\n";
         }
     } else {
         std::cerr << "Error: Parsing failed." << std::endl;
@@ -61,100 +70,143 @@ int parse(const std::string &input_string, std::string &output)
 
 void setup() {
     // Setup code here
-    asm_lines.clear();
+    gLines.clear();
 }
 
-TEST_CASE("Empty input") {
-    setup();
-    std::string input = "";
-    std::string expected_output = "";
-    std::string output;
-    REQUIRE(parse(input, output) == 0);
-    REQUIRE(asm_lines.size() == 0);
-    REQUIRE(output == expected_output);
-}
+TEST_CASE("Basic Tests") {
 
-TEST_CASE("Empty line") {
-    setup();
-    std::string input = "\n";
-    std::string expected_output = "\n";
-    std::string output;
-    REQUIRE(parse(input, output) == 0);
-    REQUIRE(asm_lines.size() == 1);
-    REQUIRE(output == expected_output);
-}
+    SUBCASE("Empty input") {
+        setup();
+        std::string input = "";
+        std::string expected_output = "";
+        std::string output;
+        REQUIRE(parse(input, output) == 0);
+        REQUIRE(gLines.size() == 0);
+        REQUIRE(output == expected_output);
+    }
 
-TEST_CASE("Empty lines") {
-    setup();
-    std::string input = "\n\n\n";
-    std::string expected_output = "\n\n\n";
-    std::string output;
-    REQUIRE(parse(input, output) == 0);
-    REQUIRE(asm_lines.size() == 3);
-    REQUIRE(output == expected_output);
+    SUBCASE("Empty line") {
+        setup();
+        std::string input = "\n";
+        std::string expected_output = "\n";
+        std::string output;
+        CHECK_EQ(parse(input, output), 0);
+        CHECK_EQ(gLines.size(), 1);
+        CHECK_EQ(output, expected_output);
+    }
+
+    SUBCASE("Empty lines") {
+        setup();
+        std::string input = "\n\n\n";
+        std::string expected_output = "\n\n\n";
+        std::string output;
+        CHECK_EQ(parse(input, output), 0);
+        CHECK_EQ(gLines.size(), 3);
+        CHECK_EQ(output, expected_output);
+    }
 }
 
 #if 0
+
+/**
+ * @brief This fails, but is it would be an an invalid assembly or C/C++ statement.
+ *
+ */
 TEST_CASE("Lines of text") {
     std::string input = "abcedfg\n0123456\nabcdefg\n";
     std::string expected_output = "abcedfg\n0123456\nabcdefg\n";
     std::string output;
-    asm_lines.clear();
+
+    setup();
     REQUIRE(parse(input, output) == 0);
-    REQUIRE(asm_lines.size() == 3);
+    REQUIRE(gLines.size() == 3);
     REQUIRE(output == expected_output);
 }
 #endif
 
-TEST_CASE("Assembler style line comment at start of line") {
-    setup();
-    std::string input = "; this is a test comment at the start of a line.\n";
-    std::string expected_output = "; this is a test comment at the start of a line.\n";
-    std::string output;
-    REQUIRE(parse(input, output) == 0);
-    REQUIRE(asm_lines.size() == 1);
-    REQUIRE(asm_lines[0].comment == "this is a test comment at the start of a line.");
-    REQUIRE(output == expected_output);
-}
+TEST_CASE("Assembler Syntax Tests") {
 
-TEST_CASE("Assembler style ine comment after whitespaces") {
-    setup();
-    std::string input = "    \t\t\t; this is a test comment following a few white spaces.\n";
-    std::string expected_output = "; this is a test comment following a few white spaces.\n";
-    std::string output;
-    REQUIRE(parse(input, output) == 0);
-    REQUIRE(asm_lines.size() == 1);
-    REQUIRE(asm_lines[0].comment == "this is a test comment following a few white spaces.");
-    REQUIRE(output == expected_output);
-}
+    SUBCASE("Assembler style line comment at start of line") {
+        std::string input = "; this is a test comment at the start of a line.\n";
+        std::string expected_output = "; this is a test comment at the start of a line.\n";
+        std::string output;
 
-TEST_CASE("Assembler style line comment after whitespaces") {
-    setup();
-    std::string input = "    \t\t\t; this is a test comment following a few white spaces.\n";
-    std::string expected_output = "; this is a test comment following a few white spaces.\n";
-    std::string output;
-    REQUIRE(parse(input, output) == 0);
-    REQUIRE(asm_lines.size() == 1);
-    REQUIRE(asm_lines[0].comment == "this is a test comment following a few white spaces.");
-    REQUIRE(output == expected_output);
-}
+        setup();
+        int result = parse(input, output);
+        CHECK_EQ(result, 0);
+        CHECK_EQ(gLines.size(), 2); // line 1 the comment, line 2 is empty
+        auto fmt = gLines[0].format();
+        CHECK_EQ(fmt, "this is a test comment at the start of a line.");
+        CHECK_EQ(output, expected_output);
+    }
 
-TEST_CASE("C++ style line comment after whitespaces") {
-    setup();
-    std::string input = "    \t\t\// this is a C++ style test comment following a few white spaces.\n";
-    std::string expected_output = "; this is a C++ style test comment following a few white spaces.\n";
-    std::string output;
-    REQUIRE(parse(input, output) == 0);
-    REQUIRE(asm_lines.size() == 1);
-    REQUIRE(asm_lines[0].comment == "this is a C++ style test comment following a few white spaces.");
-    REQUIRE(output == expected_output);
+    SUBCASE("Assembler style ine comment after whitespaces") {
+        setup();
+        std::string input = "    \t\t\t; this is a test comment following a few white spaces.\n";
+        std::string expected_output = "; this is a test comment following a few white spaces.\n";
+        std::string output;
+        REQUIRE(parse(input, output) == 0);
+        REQUIRE(gLines.size() == 1);
+        REQUIRE(gLines[0].format() == "this is a test comment following a few white spaces.");
+        REQUIRE(output == expected_output);
+    }
+
+    SUBCASE("Assembler style line comment after whitespaces") {
+        setup();
+        std::string input = "    \t\t\t; this is a test comment following a few white spaces.\n";
+        std::string expected_output = "; this is a test comment following a few white spaces.\n";
+        std::string output;
+        REQUIRE(parse(input, output) == 0);
+        REQUIRE(gLines.size() == 1);
+        REQUIRE(gLines[0].format() == "this is a test comment following a few white spaces.");
+        REQUIRE(output == expected_output);
+    }
+
+    SUBCASE("Assembler style include") {
+        setup();
+        std::string input = "\n.include \"avr_constants.inc\"\n\n";
+        std::string expected_output = "; this is a test comment following a few white spaces.\n";
+        std::string output;
+        REQUIRE(parse(input, output) == 0);
+        REQUIRE(gLines.size() == 3);
+        REQUIRE(gLines[0].format() == "this is a test comment following a few white spaces.");
+        REQUIRE(output == expected_output);
+    }
 }
 
 #if 0
-TEST_CASE("Single instruction") {
+TEST_CASE("C/C++ Syntax Tests") {
+
+    SUBCASE("C++ style line comment after whitespaces") {
+        setup();
+        std::string input = "    \t\t// this is a C++ style test comment following a few white spaces.\n";
+        std::string expected_output = "; this is a C++ style test comment following a few white spaces.\n";
+        std::string output;
+        REQUIRE(parse(input, output) == 0);
+        REQUIRE(gLines.size() == 1);
+        REQUIRE(gLines[0].format() == "this is a C++ style test comment following a few white spaces.");
+        REQUIRE(output == expected_output);
+    }
+}
+
+TEST_CASE("Single instruction (Uppercase)") {
+    setup();
     std::string input = "NOP";
     std::string expected_output = "NOP\n";
-    REQUIRE(format_asm(input) == expected_output);
+    std::string output;
+    int result = parse(input, output);
+    CHECK_EQ(result, 0);
+    REQUIRE(output == expected_output);
+}
+
+TEST_CASE("Single instruction (Lowercase)") {
+    setup();
+    std::string input = "\tnop";
+    std::string expected_output = "\tnop\n";
+    std::string output;
+    int result = parse(input, output);
+    CHECK_EQ(result, 0);
+    REQUIRE(output == expected_output);
 }
 
 TEST_CASE("Instruction with one operand") {
@@ -191,5 +243,19 @@ TEST_CASE("Label and instruction") {
     std::string input = "start: LDI r16, 0x00";
     std::string expected_output = "start: LDI r16, 0x00\n";
     REQUIRE(format_asm(input) == expected_output);
+}
+
+TEST_CASE("Line-based classes Tests") {
+
+    SUBCASE("Assembler style line comment at start of line") {
+        setup();
+        std::string input = "; this is a test comment at the start of a line.\n";
+        std::string expected_output = "; this is a test comment at the start of a line.\n";
+        std::string output;
+        REQUIRE(parse(input, output) == 0);
+        REQUIRE(gLines.size() == 1);
+        REQUIRE(gLines[0].format() == "this is a test comment at the start of a line.");
+        REQUIRE(output == expected_output);
+    }
 }
 #endif

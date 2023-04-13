@@ -12,6 +12,53 @@
       "args": [],
       "cwd": "${workspaceFolder}",
       "stopAtEntry": true,
+      "preLaunchTask": "Build Tests",
+      "env": {},
+      "osx": {
+        "MIMode": "lldb",
+        "miDebuggerPath": "/usr/bin/lldb-mi",
+        "miDebuggerArgs": "--interpreter=mi2",
+        "debugServerPath": "/usr/bin/lldb-server",
+        "debugServerArgs": "platform --listen localhost:0",
+        "setupCommands": [
+          {
+            "text": "plugin load /usr/local/opt/llvm/lib/liblldb.dylib",
+            "description": "load lldb plugin"
+          }
+        ]
+      },
+      "linux": {
+        "MIMode": "lldb",
+        "miDebuggerPath": "/usr/bin/lldb-mi",
+        "miDebuggerArgs": "--interpreter=mi2",
+        "setupCommands": [
+          {
+            "text": "plugin load /usr/lib/lldb/plugins/LLDB-mi.plugin",
+            "description": "load lldb plugin"
+          }
+        ]
+      },
+      "windows": {
+        "MIMode": "lldb",
+        "miDebuggerPath": "C:/Program Files/LLVM/bin/lldb-mi.exe",
+        "miDebuggerArgs": "--interpreter=mi2",
+        "setupCommands": [
+          {
+            "text": "plugin load C:/Program Files/LLVM/bin/lldb.dll",
+            "description": "load lldb plugin"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Debug Doctest Lines tests with LLDB",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/test_lines",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": true,
+      "preLaunchTask": "Build Lines Tests",
       "env": {},
       "osx": {
         "MIMode": "lldb",
