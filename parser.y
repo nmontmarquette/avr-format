@@ -59,7 +59,6 @@ void process_cpp_line_comment(const char* text);
 %token <sval> C_DIRECTIVE
 %token SEMICOLON
 %token <sval> STRING
-%token <sval> WHITESPACE
 
 %type <sval> comment
 %type <sval> directive

@@ -22,7 +22,7 @@ const char* token_type_to_str(const int token_type){
         case NUMBER: return "NUMBER";
         case SEMICOLON: return "SEMICOLON";
         case STRING: return "STRING";
-        case WHITESPACE: return "WHITESPACE";
+        //case WHITESPACE: return "WHITESPACE";
         default: return "UNKNOWN";
     }
 }
@@ -50,8 +50,8 @@ void debug_print(const int token_type){
 
 <INITIAL>{
     \"([^\\\"]|\\.)*\" { debug_print(STRING); yylval.sval = strdup(yytext); yycolumn += yyleng; return STRING; }
-    [\ \t]+        { debug_print(WHITESPACE); yycolumn += yyleng; return WHITESPACE; }
-    \n            { debug_print(EOL); ++yylineno; yycolumn = 1; return EOL; }
+    [\ \t]+        { yycolumn += yyleng; }
+    \n            { debug_print(EOL); ++yylineno; yycolumn = 1; return EOL;}
     [a-zA-Z][a-zA-Z0-9_]*:       { debug_print(LABEL); yylval.sval = strdup(yytext); yycolumn += yyleng; return LABEL; }
     [a-zA-Z][a-zA-Z0-9_]*       { debug_print(IDENTIFIER); yylval.sval = strdup(yytext); yycolumn += yyleng; return IDENTIFIER; }
     ,             { debug_print(COMMA); yycolumn += yyleng; return COMMA; }
