@@ -1,7 +1,5 @@
 %{
 #include <iostream>
-#include <string>
-#include <vector>
 
 extern int yylex();
 extern void yyerror(const char *s);
@@ -10,10 +8,7 @@ int yywrap() {
     return 1;
 }
 
-struct AsmLine {
-    std::string label;
-    std::string instruction;
-};
+#include "../asmline.h"
 
 std::vector<AsmLine> asm_lines;
 
@@ -22,11 +17,16 @@ void print_formatted_asm();
 %}
 
 %union {
+    int ival; // Add this line
     char *sval;
+    //AsmLine alval;
 }
 
 %token <sval> LABEL
 %token <sval> INSTRUCTION
+%token COMMA PLUS MINUS MULT DIV
+%token NUMBER
+%token LPAREN RPAREN
 %token EOL
 
 %type <sval> label
@@ -73,6 +73,11 @@ void print_formatted_asm() {
     asm_lines.clear();
 }
 
-void yyerror(const char *s) {
-    std::cerr << "Error: " << s << std::endl;
+extern int yylineno;
+extern int yycolumn;
+extern char *yytext;
+
+void yyerror(const char *error_message) {
+    std::cerr << "Error: " << error_message << " at line " << yylineno << ", column " << yycolumn << ", near '" << yytext << "'" << std::endl;
 }
+

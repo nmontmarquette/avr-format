@@ -10,7 +10,7 @@ BIN_DIR = bin
 
 EXECUTABLE = formatter
 
-.PHONY: all clean
+.PHONY: all clean test
 
 all: $(BUILD_DIR) $(BUILD_DIR)/$(EXECUTABLE)
 
@@ -18,9 +18,9 @@ $(BUILD_DIR):
 	@echo "Creating build folder ..."
 	mkdir $(BUILD_DIR)
 
-$(BUILD_DIR)/$(EXECUTABLE): main.cpp $(BUILD_DIR)/lexer.cpp $(BUILD_DIR)/parser.tab.cpp
+$(BUILD_DIR)/$(EXECUTABLE): asmline.h main.cpp $(BUILD_DIR)/lexer.cpp $(BUILD_DIR)/parser.tab.cpp
 	@echo "Generating binary ..."
-	$(CC) $(CXXFLAGS) -o $@ $^
+	$(CC) $(CXXFLAGS) -o $@ main.cpp $(BUILD_DIR)/lexer.cpp $(BUILD_DIR)/parser.tab.cpp
 
 $(BUILD_DIR)/lexer.cpp: $(SRC_DIR)/lexer.l $(BUILD_DIR)/parser.tab.hpp
 	@echo "Generating lexer ..."
@@ -29,6 +29,9 @@ $(BUILD_DIR)/lexer.cpp: $(SRC_DIR)/lexer.l $(BUILD_DIR)/parser.tab.hpp
 $(BUILD_DIR)/parser.tab.cpp $(BUILD_DIR)/parser.tab.hpp: $(SRC_DIR)/parser.y
 	@echo "Generating parser ..."
 	$(BISON) -d -o $(BUILD_DIR)/parser.tab.cpp $<
+
+test: $(BUILD_DIR)/$(EXECUTABLE)
+	$(BUILD_DIR)/$(EXECUTABLE) ../src/6502-dbg.s
 
 clean:
 	@echo "Cleaning up ..."
