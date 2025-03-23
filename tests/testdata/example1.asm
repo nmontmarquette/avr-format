@@ -1,0 +1,1 @@
+label1:  ldi r16, 255 ; Load immediate
