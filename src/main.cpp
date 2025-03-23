@@ -2,7 +2,7 @@
 #include <fstream>
 
 #include "lines.h"
-#include "build/parser.tab.hpp"
+#include "parser.tab.hpp"
 
 extern FILE *yyin;
 extern int yyparse();

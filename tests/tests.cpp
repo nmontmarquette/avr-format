@@ -2,8 +2,8 @@
 #include <iostream>
 #include <vector>
 #include "doctest.h"
-#include "lines.h"
-#include "build/parser.tab.hpp"
+#include "src/lines.h"
+#include "src/parser.tab.hpp"
 
 extern int yyparse();
 extern void yy_scan_string(const char* str);

@@ -1,7 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <iostream>
 #include "doctest.h"
-#include "lines.h"
+#include "src/lines.h"
 
 
 void setup() {

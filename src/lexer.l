@@ -1,7 +1,7 @@
 %{
 #include <iostream>
 #include "parser.tab.hpp"
-#include "../lines.h"
+#include "lines.h"
 
 int yycolumn = 1;
 

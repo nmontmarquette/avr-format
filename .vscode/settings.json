@@ -4,5 +4,8 @@
         "titleBar.activeBackground": "#324609",
         "titleBar.activeForeground": "#F6FCE9"
     },
-    "github.copilot.chat.localeOverride": "en"
+    "github.copilot.chat.localeOverride": "en",
+    "testMate.cpp.discovery.loadOnStartup": true,
+    "testMate.cpp.discovery.strictPattern": true,
+    "testMate.cpp.discovery.testListCaching": true
 }

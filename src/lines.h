@@ -21,10 +21,10 @@ enum TextCasing {
 
 class Base {
 protected:
+    MyString mText;
     bool mLeadingSpaces;
     bool mUseTabs;
     TextCasing mTextCasing;
-    MyString mText;
 
 public:
     Base(const char *text, bool leadingSpaces=false, TextCasing textCasing=TextCasing::AS_IS)
@@ -86,7 +86,6 @@ public:
     };
 };
 
-#if 0
 class Directive: public Element {
 public:
     Directive(const char* directive)
@@ -128,9 +127,7 @@ public:
         return slice(mElements, 1, mElements.size());
     }
 };
-#endif
 
-#if 0
 class Instruction: public Element {
 public:
     Instruction()
@@ -162,7 +159,6 @@ public:
         return mElements[1+index];
     }
 };
-#endif
 
 class Comment: public Element {
 private:
@@ -215,7 +211,11 @@ public:
     }
 
     MyString text() const {
-        return MyString("");
+        MyString output;
+        output += mElements[0].text();
+        output += " ";
+        output += mElements[1].text();
+        return output;
     }
 };
 
@@ -279,12 +279,12 @@ public:
     }
 
     /**
-     * @brief Formats one line of source code
+     * @brief Formats a single line of source code.
      *
-     * The formatting goes through individual elements and format them accordingly taking
-     * the configuration into account (capitalization, spaces vs. tabs, columns start etc)
+     * This method processes individual elements of the line and formats them according to
+     * the specified configuration, including capitalization, spaces vs. tabs, column alignment, etc.
      *
-     * @return MyString
+     * @return MyString The formatted line as a string.
      */
     MyString format() const {
         MyString line;

@@ -9,7 +9,7 @@ int yywrap() {
     return 1;
 }
 
-#include "../lines.h"
+#include "lines.h"
 
 Lines gLines;
 
