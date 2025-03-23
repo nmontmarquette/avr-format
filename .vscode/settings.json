@@ -3,5 +3,6 @@
         "activityBar.background": "#243206",
         "titleBar.activeBackground": "#324609",
         "titleBar.activeForeground": "#F6FCE9"
-    }
+    },
+    "github.copilot.chat.localeOverride": "en"
 }
