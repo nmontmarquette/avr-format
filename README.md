@@ -28,7 +28,8 @@ Run the executable with the input assembly file:
 
 ## Running Tests
 ```bash
-make tests
+make # the test executable currently requires building everything first
+make test
 ```
 
 ## License

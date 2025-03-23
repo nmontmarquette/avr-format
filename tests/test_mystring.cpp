@@ -1,12 +1,6 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <iostream>
 #include "doctest.h"
 #include "src/mystring.h"
-
-
-void setup() {
-    // Setup code here
-}
 
 TEST_CASE("Mystring class Tests") {
 

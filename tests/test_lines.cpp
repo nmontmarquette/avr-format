@@ -1,12 +1,6 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <iostream>
 #include "doctest.h"
 #include "src/lines.h"
-
-
-void setup() {
-    // Setup code here
-}
 
 TEST_CASE("Line-based classes Tests") {
 
@@ -33,7 +27,7 @@ TEST_CASE("Line-based classes Tests") {
         Directive directive("#include", "\"65xx_defs.h\"");
         CHECK(directive.directive().text() == "#include");
         CHECK(directive.parameters().size() == 1);
-        CHECK(directive.parameter(0).text() == "\"65xx_defs.h\"");
+        CHECK(directive.parameter(0).text() == "\"65ssxx_defs.h\"");
     }
 
    SUBCASE("Test initializing an assembler directive with 2 parameters.") {
